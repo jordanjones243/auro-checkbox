@@ -47,7 +47,7 @@
     "core-js": "^3.31.1",
     "eslint": "^8.45.0",
     "eslint-plugin-jsdoc": "^46.4.4",
-    "husky": "^8.0.3",
+    "husky": "^8.0.0",
     "lodash": "^4.17.21",
     "markdown-magic": "^2.6.1",
     "nodemon": "^3.0.1",
@@ -151,6 +151,7 @@
     "sweep": "rm -rf ./demo/css ./dist | rm ./src/*.css ./src/*-css.js",
     "test": "wtr --coverage",
     "test:watch": "wtr --watch",
-    "types": "tsc"
+    "types": "tsc",
+    "prepare": "husky install"
   }
 }
