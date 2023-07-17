@@ -235,7 +235,10 @@ export class AuroCheckboxGroup extends LitElement {
   }
 
   handleItems() {
-    this.items = Array.from(this.querySelectorAll('auro-checkbox'));
+    const groupTagName = this.tagName.toLowerCase();
+    const checkboxTagName = groupTagName.substring(0, groupTagName.indexOf('-group'));
+
+    this.items = Array.from(this.querySelectorAll(checkboxTagName));
 
     this.handlePreselectedItems();
 
