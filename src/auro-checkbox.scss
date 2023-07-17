@@ -1,0 +1,236 @@
+// Copyright (c) 2020 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+/* stylelint-disable custom-property-empty-line-before,
+   custom-property-pattern,
+   selector-max-class,
+   scss/selector-nest-combinators,
+   order/properties-order,
+   max-nesting-depth,
+   selector-max-combinators,
+   selector-max-compound-selectors,
+   selector-class-pattern,
+   rule-empty-line-before,
+   scss/selector-no-redundant-nesting-selector,
+   no-descending-specificity,
+   no-duplicate-selectors,
+   declaration-empty-line-before */
+
+// Import Auro tokens
+@import "./../node_modules/@alaskaairux/design-tokens/dist/tokens/SCSSVariables";
+
+@import "./../node_modules/@aurodesignsystem/webcorestylesheets/dist/breakpoints";
+@import "./../node_modules/@aurodesignsystem/webcorestylesheets/dist/core";
+@import './../node_modules/@aurodesignsystem/webcorestylesheets/dist/utilityClasses/displayProperties';
+
+// container styles - defines the look of the outer custom component
+:host {
+  display: block;
+  --cbxLocation: var(--auro-size-50);
+}
+
+// layout styles - define any layout specifications for UI that is contained WITHIN the component
+// never define layout that would cause effect on element outside the scope of this component
+
+@mixin focus-visible {
+  .displayFlex {
+    .inputGroup:focus-within {
+      width: auto;
+    }
+  }
+
+  .cbxGroup {
+    display: block;
+    padding-right: var(--auro-size-100);
+
+    .label--cbx {
+      &:before{
+        border-color: var(--auro-color-brand-atlas-400);  
+      }
+
+      &:after {
+        outline: 1px solid var(--auro-color-border-active-on-light);
+        border-color: var(--auro-color-border-active-on-light);
+      }
+    }
+
+    .cbx--input {
+      &:checked {
+        + .label {
+          &:after {
+            outline: 1px solid var(--auro-color-border-active-on-light);
+            border-color: var(--auro-color-border-focus-on-dark);;
+          }
+        }
+      }
+
+      &:disabled {
+        & + .label {
+          &:hover {
+            &:after {
+              background-color: var(--auro-color-background-lightest);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+:host(.focus-visible) {
+  @include focus-visible;
+}
+
+fieldset {
+  all: unset;
+}
+
+.displayFlex {
+  slot {
+    @include auro_breakpoint--sm {
+      display: flex;
+
+      .ods-inputGroup {
+        margin-left: 10px;
+
+        &:first-child {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+}
+
+.cbxGroup {
+  position: relative;
+  padding-left: var(--auro-size-100);
+  padding-right: var(--auro-size-100);
+  line-height: var(--auro-size-400);
+}
+
+.cbx--input {
+  &:disabled {
+
+    & + label {
+      color: var(--auro-color-text-disabled-on-light);
+
+      &:hover {
+        cursor: auto;
+
+        &:after {
+          background-color: var(--auro-color-background-lightest);
+        }
+      }
+    }
+
+    & + .label--cbx {
+      &:before {
+        border-color: var(--auro-color-base-white);
+      }
+
+      &:after {
+        border-color: var(--auro-color-text-disabled-on-light);
+      }
+    }
+  }
+
+  &:checked {
+    & + .label--cbx {
+      &:hover {
+        &:after {
+          background-color: var(--auro-color-ui-hover-on-light);
+        }
+      }
+
+      &:after {
+        opacity: 1;
+        background-color: var(--auro-color-ui-default-on-light);
+        border-color: var(--auro-color-border-active-on-light);
+      }
+
+      &:before {
+        transition: background-color 0.2s cubic-bezier(.35,.9,.4,.9);
+        opacity: 1;
+      }
+    }
+
+    &:disabled {
+      & + .label--cbx {
+        &:after {
+          background-color: var(--auro-color-brand-gray-200);
+          border-color: var(--auro-color-text-disabled-on-light);
+        }
+      }
+    }
+
+    & + .errorBorder {
+      &:before {
+        border-color: var(--auro-color-base-white);
+      }
+      &:after {
+        border-color: var(--auro-color-border-error-on-light);
+        background-color: var(--auro-color-border-error-on-light);
+      }
+      &:hover {
+        &:after {
+          background-color: var(--auro-color-alert-error-on-light);
+        }
+      }
+    }
+  }
+}
+
+.label {
+  margin-left: var(--auro-size-300);
+  display: block;
+
+  &:hover {
+    cursor: pointer;
+
+    &:after {
+      background-color: var(--auro-color-ui-bkg-hover-on-light);
+    }
+  }
+}
+
+// No tokens available for values used here
+.label--cbx {
+  &:after {
+    -webkit-tap-highlight-color: transparent;
+    position: absolute;
+    content: '';
+    top: var(--auro-size-50);
+    left: var(--cbxLocation);
+    width: calc(var(--auro-size-200) + var(--auro-size-50));
+    height: calc(var(--auro-size-200) + var(--auro-size-50));
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--auro-color-base-gray-500);
+    border-radius: var(--auro-border-radius);
+    z-index: 0;
+    background-color: var(--auro-color-base-white);
+  }
+}
+
+.label--cbx {
+  &.errorBorder {
+    &:after {
+      border-color: var(--auro-color-border-error-on-light);
+    }
+  }
+}
+
+.svg--cbx {
+  position: absolute;
+  top: var(--auro-size-25);
+  left: var(--auro-size-25);
+
+  padding-top: 3px;
+  padding-bottom: 3px;
+
+  z-index: 1;
+
+  color: var(--auro-color-base-white);
+}

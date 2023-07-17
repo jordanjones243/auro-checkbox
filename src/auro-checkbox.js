@@ -1,59 +1,181 @@
-// Copyright (c) 2023 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// Copyright (c) 2020 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
 // See LICENSE in the project root for license information.
 
 // ---------------------------------------------------------------------
 
-// If using litElement base class
-import { LitElement, html } from "lit";
-
-// If using auroElement base class
-// See instructions for importing auroElement base class https://git.io/JULq4
-// import { LitElement, html } from "lit";
-// import AuroElement from '@aurodesignsystem/webcorestylesheets/dist/auroElement/auroElement';
+import { LitElement, html, css } from "lit";
+import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 // Import touch detection lib
-import styleCss from "./style-css.js";
+import styleCss from "./auro-checkbox-css.js";
+import checkLg from '../node_modules/@alaskaairux/icons/dist/icons/interface/check-lg_es6.js';
 
-// See https://git.io/JJ6SJ for "How to document your components using JSDoc"
 /**
- * The auro-checkbox element provides users a way to ... (it would be great if you fill this out).
+ * The auro-select element is a wrapper for auro-dropdown and auro-menu to create a dropdown menu control.
  *
- * @attr {Boolean} fixed - Uses fixed pixel values for element shape
- * @attr {String} cssClass - Applies designated CSS class to demo element - you want to delete me!
+ * @attr {Boolean} checked - If set to true, the checkbox will be filled with a checkmark.
+ * @attr {Boolean} disabled - If set to true, the checkbox will be unclickable.
+ * @attr {Boolean} required - Populates the `required` attribute on the checkbox. Used for client-side validation.
+ * @attr {Boolean} error - If set to true, sets an error state on the checkbox.
+ * @attr {String} id - Sets the individual `id` per element.
+ * @attr {String} name - Accepts any string, `DOMString` representing the value of the input.
+ * @attr {String} value - Sets the element's input value.
+ * @csspart checkbox - apply css to a specific checkbox.
+ * @csspart checkbox-input - apply css to a specifix checkbox's input.
+ * @csspart checkbox-label - apply css to a specifix checkbox's label.
  */
 
 // build the component class
 export class AuroCheckbox extends LitElement {
-  // constructor() {
-  //   super();
-  // }
-
-  // This function is to define props used within the scope of this component
-  // Be sure to review  https://lit.dev/docs/components/properties/
-  // to understand how to use reflected attributes with your property settings.
-  static get properties() {
-    return {
-      // ...super.properties,
-
-      // this property is DEMO ONLY! Please delete.
-      cssClass:   { type: String }
-    };
+  constructor() {
+    super();
+    this.checked = false;
+    this.disabled = false;
+    this.required = false;
+    this.error = false;
   }
 
   static get styles() {
-    return [styleCss];
+    return css`
+      ${styleCss}
+    `;
   }
 
-  // When using auroElement, use the following attribute and function when hiding content from screen readers.
-  // aria-hidden="${this.hideAudible(this.hiddenAudible)}"
+  // function to define props used within the scope of thie component
+  static get properties() {
+    return {
+      checked: {
+        type: Boolean,
+        reflect: true
+      },
+      disabled: {
+        type: Boolean,
+        reflect: true
+      },
+      required: {
+        type: Boolean,
+        reflect: true
+      },
+      error: {
+        type: Boolean,
+        reflect: true
+      },
+      id:       { type: String },
+      name:     { type: String },
+      value:    { type: String }
+    };
+  }
+
+  // This custom event is only for the purpose of supporting IE
+  // .addEventListener('change', function() { })
+  handleChange(event) {
+    this.checked = event.target.checked;
+    const customEvent = new CustomEvent(event.type, event);
+
+    this.dispatchEvent(customEvent);
+  }
+
+  handleInput(event) {
+    this.checked = event.target.checked;
+
+    this.dispatchEvent(new CustomEvent('auroCheckbox-input', {
+      bubbles: true,
+      cancelable: false,
+      composed: true,
+    }));
+  }
+
+  invalid(error) {
+    if (error) {
+      return 'true';
+    }
+
+    return 'false';
+  }
+
+  isRequired(required) {
+    if (required) {
+      return 'true';
+    }
+
+    return 'false';
+  }
+
+  /**
+   * Function to support @focusin event.
+   * @private
+   * @returns {void}
+   */
+  handleFocusin() {
+    this.dispatchEvent(new CustomEvent('auroCheckbox-focusin', {
+      bubbles: true,
+      cancelable: false,
+      composed: true,
+    }));
+  }
+
+  /**
+   * Function to generate checkmark svg.
+   * @private
+   * @returns {void}
+   */
+  generateIconHtml() {
+    this.dom = new DOMParser().parseFromString(checkLg.svg, 'text/html');
+    this.svg = this.dom.body.firstChild;
+
+    this.svg.classList.add('svg--cbx');
+
+    return this.svg;
+  }
+
+  firstUpdated() {
+    this.addEventListener('click', () => {
+      this.handleFocusin();
+    });
+
+    this.addEventListener('focusin', () => {
+      this.handleFocusin();
+    });
+
+    this.addEventListener('focusout', () => {
+      this.dispatchEvent(new CustomEvent('auroCheckbox-focusout', {
+        bubbles: true,
+        cancelable: false,
+        composed: true,
+      }));
+    });
+  }
 
   // function that renders the HTML and CSS into  the scope of the component
   render() {
-    return html`
+    const labelClasses = {
+      'label': true,
+      'label--cbx': true,
+      'errorBorder': this.error
+    };
 
-      <!-- this is demo code, DO NOT USE IN YOUR ELEMENT -->
-      <div class=${this.cssClass} tabindex="0">
-        <slot></slot>
+    return html`
+      <div class="cbxGroup" part="checkbox">
+        <input
+          class="util_displayHiddenVisually cbx--input"
+          part="checkbox-input"
+          @change=${this.handleChange}
+          @input="${this.handleInput}"
+          ?disabled="${this.disabled}"
+          aria-invalid="${this.invalid(this.error)}"
+          aria-required="${this.isRequired(this.required)}"
+          .checked="${this.checked}"
+          id="${ifDefined(this.id)}"
+          name="${ifDefined(this.name)}"
+          type="checkbox"
+          .value="${this.value}"
+        />
+
+        <label for="${ifDefined(this.id)}" class="${classMap(labelClasses)}" part="checkbox-label">
+          ${this.checked ? this.generateIconHtml() : undefined}
+          <slot></slot>
+        </label>
       </div>
     `;
   }

@@ -1,0 +1,54 @@
+// Copyright (c) 2020 Alaska Airlines. All right reserved. Licensed under the Apache-2.0 license
+// See LICENSE in the project root for license information.
+
+// ---------------------------------------------------------------------
+
+/* stylelint-disable no-descending-specificity,
+   no-duplicate-selectors
+   declaration-empty-line-before,
+   comment-whitespace-inside,
+   selector-max-combinators,
+   selector-max-compound-selectors,
+   selector-max-type,
+   scss/selector-nest-combinators,
+   selector-class-pattern */
+
+// Import Auro tokens
+@import "./../node_modules/@alaskaairux/design-tokens/dist/tokens/SassCustomProperties";
+
+:host {
+  display: block;
+  padding-bottom: var(--auro-size-150);
+  color: var(--auro-color-text-primary-on-light);
+}
+
+:host([disabled]) {
+  color: var(--auro-color-text-disabled-on-light);
+}
+
+.displayFlex {
+  legend + slot {
+    display: flex;
+    white-space: nowrap;
+  }
+}
+
+fieldset {
+  all: unset;
+
+}
+
+legend {
+  margin-bottom: var(--auro-size-150);
+}
+
+.checkboxGroupElement-helpText {
+  color: var(--auro-color-text-secondary-on-light);
+}
+
+:host([validity]:not([validity='valid'])) {
+  .checkboxGroupElement-helpText {
+    color: var(--auro-color-alert-error-on-light);
+  }
+}
+
